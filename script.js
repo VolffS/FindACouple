@@ -166,34 +166,35 @@ function createCourp(sourceGif,idCard) {
     return element;
 }
 
-function eventRotateCard(target, selectObjcts) {
+function eventRotateCard(target, selectObjects) {
     let card = findCard(target);
     const cardFront = card.querySelector(".front-card");
     const cardBack = card.querySelector(".back-card");
-
-    if (!cardBack.classList.contains("couples") && !selectObjcts.selectCouple){
-        if (selectObjcts.firstObjct !== "") {
-            if (findCard(selectObjcts.firstObjct).id !== card.id){
+    let newSelectObjects = selectObjects;
+    if (!cardBack.classList.contains("couples") && !selectObjects.selectCouple){
+        if (selectObjects.firstObjct !== "") {
+            if (findCard(selectObjects.firstObjct).id !== card.id){
                 cardFront.classList.toggle("front-card-active");
                 cardBack.classList.toggle("back-card-active");
-                selectObjcts.seconsObjct = cardBack;
-                setTimeout(changeCouple, 1200, selectObjcts, checkCouple(selectObjcts));
-            }
-            let temp = {
-                firstObjct:"",
-                seconsObjct:"",
-                selectCouple:true,
-            }
-            return {selectObjcts:temp, selectCouple:true};
+                selectObjects.seconsObjct = cardBack;
+                setTimeout(changeCouple, 1200, selectObjects, checkCouple(selectObjects));
+                newSelectObjects = {
+                    firstObjct:"",
+                    seconsObjct:"",
+                    selectCouple:true,
+                }
+            } 
+
+            return {selectObjcts:newSelectObjects, selectCouple:true};
         } else {
             cardFront.classList.toggle("front-card-active");
             cardBack.classList.toggle("back-card-active");
 
-            selectObjcts.firstObjct = cardBack;
+            selectObjects.firstObjct = cardBack;
         }
     }
 
-    return {selectObjcts:selectObjcts, selectCouple:false};
+    return {selectObjcts:selectObjects, selectCouple:false};
 }
 
 function findCard(target) {
