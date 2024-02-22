@@ -5,7 +5,35 @@
     <title>Найди Пару</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="">
+<main class="container">
 
+</main>
+
+<script src="script.js"></script>
+<script type="module">
+    import confetti from 'https://cdn.skypack.dev/canvas-confetti';
+
+    let target = document.querySelector("body");
+    const config = {
+        attributes: true,
+        childList: false,
+        subtree: false,
+    };
+    const callback = function (mutationsList, observer) {
+        for (let mutation of mutationsList) {
+            if (mutation.target.classList[0] === "bg-confetti-animated") {
+                makeConf();
+            }
+        }
+    };
+    const observer = new MutationObserver(callback);
+
+    observer.observe(target, config);
+
+    function makeConf(){
+        confetti({particleCount: 100,startVelocity: 30,spread: 270,});
+    }
+</script>
 </body>
 </html>
