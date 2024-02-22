@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <title>Найди Пару</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body class="">
+
 <main class="container">
 
 </main>
@@ -20,7 +22,7 @@
         childList: false,
         subtree: false,
     };
-    const callback = function (mutationsList, observer) {
+    const callback = function (mutationsList) {
         for (let mutation of mutationsList) {
             if (mutation.target.classList[0] === "bg-confetti-animated") {
                 makeConf();

@@ -4,7 +4,7 @@ body {
   display: grid;
   place-items: center;
   position: relative;
-  font-family: Georgia, "Times New Roman";
+  font-family: 'Roboto', sans-serif;
   font-size: 2rem;
   color: #ffffff;
 
@@ -22,7 +22,10 @@ body {
     margin: 0;
     padding: 0;
   }
-
+  .menu-container {
+    display: grid;
+    place-items: center;
+  }
   .container {
     display: grid;
     place-items: center;
@@ -139,7 +142,7 @@ body {
     }
   }
     button{
-      font-family: Georgia, "Times New Roman";
+      font-family: 'Roboto', sans-serif;
       background-color: #5c5b60;
       border-radius: .4rem;
       border: none;

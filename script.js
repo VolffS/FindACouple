@@ -21,55 +21,74 @@ const sourcesGifs = [
     "https://media1.tenor.com/m/GZ8zw59v19EAAAAC/nicolas-cage.gif",
     "https://media1.tenor.com/m/YFzLI0nN_vQAAAAd/nicolas-cage-smoking.gif"
 ];
-let selectObkectes = {
+let selectObjects = {
     firstObjct:"",
     seconsObjct:"",
     selectCouple: false,
 };
-let clock = new Date();
-let countAttempts = 0;
-clock.setHours(0,0,0);
+let timerStatistics = {
+    timerId:"",
+    clock: new Date(0,0,0,0,0,0),
+    countAttempts: 0,
+}
+const originBody = document.querySelector("body");
 
+createMenu(originBody);
 
-createMenu();
+function startGame(sourcesGifs, countImg, timer) {
+    const containerCouple = document.querySelector("main.container");
+    containerCouple.textContent = "";
+    timer.timerId = fillStatistics(timer);
 
-function startGame(sourcesGifs, countImg) {
-    const conteinerCouple = document.querySelector("main.container");
-    conteinerCouple.textContent = "";
-    fillStatistics(clock, countAttempts);
+    redrawGame(sourcesGifs,countImg, timer.timerId);
 
-    redrawGame(sourcesGifs,countImg);
+    return timer.timerId;
 }
 
-function createMenu() {
-    const conteinerCouple = document.querySelector("main.container");
-    conteinerCouple.innerHTML= `<h1>Найди Пару</h1>
-     <h2> Выбери сложность</h2>`;
+function createMenu(originBody) {
+    let menu = document.querySelector("main.menu-container");
+    const containerCouple = document.querySelector("main.container");
+    containerCouple.textContent = "";
+    if (!menu) {
+        menu = document.createElement("main");
+        menu.classList.add("menu-container");
+         menu .innerHTML= `<h1>Найди Пару</h1>
+                            <h2> Выбери сложность</h2>`;
 
-    conteinerCouple.appendChild(createBtnMenu(10));
-    conteinerCouple.appendChild(createBtnMenu(12));
-    conteinerCouple.appendChild(createBtnMenu(14));
-    conteinerCouple.appendChild(createBtnMenu(16));
+        menu.appendChild(createBtnMenu(10));
+        menu.appendChild(createBtnMenu(12));
+        menu.appendChild(createBtnMenu(14));
+        menu.appendChild(createBtnMenu(16));
+
+        originBody.prepend(menu);
+    } else {
+        menu.style !== "display:none"  ? menu.style = "display:grid" : menu.style = "display:none";
+    }
+
+
+
 }
 
-function fillStatistics(clock, countAttempts) {
-    const conteinerCouple = document.querySelector("main.container");
+function fillStatistics(timer) {
+    const containerCouple = document.querySelector("main.container");
     const statistics = document.createElement("div");
     statistics.id = "statistics";
     statistics.innerHTML = `<h2 id="time">Время</h2>
     <h3 id="attempts">Попыток:</h3>`;
 
-    conteinerCouple.appendChild(statistics);
+    containerCouple.appendChild(statistics);
 
     const time = document.getElementById("time");
     const attempts = document.getElementById("attempts");
 
-    setInterval(()=>{
-        clock.setSeconds(clock.getSeconds()+1)
-        time.textContent = `Время ${clock.getHours() ? clock.getHours()+":" :""} 
-                                ${clock.getMinutes() ? clock.getMinutes()+":" :""}${clock.getSeconds()}`;
-        attempts.textContent =`Попыток:${countAttempts}`;
+    return setInterval(()=>{
+        timer.clock.setSeconds(timer.clock.getSeconds()+1)
+        time.textContent = `Время ${timer.clock.getHours() ? timer.clock.getHours()+":" :""} 
+                                ${timer.clock.getMinutes() ? timer.clock.getMinutes()+":" :""}
+                                ${timer.clock.getSeconds()}`;
+        attempts.textContent =`Попыток:${timer.countAttempts}`;
     },1000);
+
 }
 
 function createBtnMenu(countCard) {
@@ -77,52 +96,53 @@ function createBtnMenu(countCard) {
     btnMenu.textContent = `${countCard} карт`;
     btnMenu.classList.add("SelectGame");
     btnMenu.addEventListener("click", ()=> {
-        countAttempts = 0;
-        clock.setHours(0,0,0);
-        startGame(sourcesGifs,countCard);
+        timerStatistics.countAttempts = 0;
+        timerStatistics.clock = new Date(0,0,0,0,0,0);
+        timerStatistics.timerId = startGame(sourcesGifs,countCard,timerStatistics);
+        document.querySelector("main.menu-container").style = "display:none";
     })
 
     return btnMenu;
 }
 
-function redrawGame(sourcesGifs, count) {
-    const conteinerCouple = document.querySelector("main.container");
+function redrawGame(sourcesGifs, count, timerId) {
+    const containerCouple = document.querySelector("main.container");
 
-    conteinerCouple.appendChild(createConteinerCouple(sourcesGifs, count));
-    conteinerCouple.appendChild(createBtnBackMenu());
+    containerCouple.appendChild(createContainerCouple(sourcesGifs, count));
+    containerCouple.appendChild(createBtnBackMenu(timerId));
 }
 
-function createConteinerCouple(sourcesGifs, count) {
+function createContainerCouple(sourcesGifs, count) {
     const tableCourple = document.createElement("div");
     tableCourple.classList.add("container-couple",`couple-${count}`);
     let gifs =[];
-
+    let newSourcesGifs = sourcesGifs.slice();
+    shuffle(newSourcesGifs);
     for (let i=0; i<(count/2); i++) {
-        gifs.push({
+        let gif = {
             id: "id" + Math.random().toString(16).slice(2),
-            srcGif: sourcesGifs.splice(Math.floor(Math.random() * (sourcesGifs.length - (-1)) + (-1)),1).toString(),
-            countGif: 0,
+            srcGif: newSourcesGifs[i],
             couple: false,
-        })
-    }
-    for (let i=0; i<(count); i++) {
-        while (true){
-            let randomIndex = Math.floor(Math.random() * (count/2 - (0)) + (0));
-            if (!gifs[randomIndex].couple && gifs[randomIndex].couple !== "waiting") {
-                tableCourple.appendChild(createCourp(gifs[randomIndex], i));
-                gifs[randomIndex].couple = "waiting";
-                break;
-            } else {
-                if (gifs[randomIndex].couple === "waiting") {
-                    tableCourple.appendChild(createCourp(gifs[randomIndex], i));
-                    gifs[randomIndex].couple = "true";
-                    break;
-                }
-            }
         }
+        gifs.push(gif)
+        gifs.push(gif)
+    }
+    shuffle(gifs);
+    for (let i=0; i<(count); i++) {
+        tableCourple.appendChild(createCourp(gifs[i], i));
     }
 
     return tableCourple;
+}
+
+function randomMinMax(min, max) {
+    return  Math.floor(Math.random() * (max - (min)) + (min))
+}
+function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        let j = randomMinMax(1, i);
+        [array[i], array[j]] = [array[j], array[i]];
+    }
 }
 
 function createCourp(sourceGif,idCard) {
@@ -131,13 +151,16 @@ function createCourp(sourceGif,idCard) {
     element.id = idCard;
     element.innerHTML = `
         <div class="front-card"></div>
-        <img class="back-card" value="${sourceGif.id}" src="${sourceGif.srcGif}">
+        <img class="back-card" value="${sourceGif.id}" src="${sourceGif.srcGif}" alt="">
     `;
     element.addEventListener("click", (ev)=> {
-        let statusEvent = eventRotateCard(ev.target, selectObkectes);
-        selectObkectes = statusEvent.selectObjcts;
-         if (statusEvent.selectCouple)  countAttempts++;
-        setTimeout(didPlayerWin,3000);
+        let statusEvent = eventRotateCard(ev.target, selectObjects);
+        selectObjects = statusEvent.selectObjcts;
+         if (statusEvent.selectCouple) {
+             timerStatistics.countAttempts++;
+             setTimeout(didPlayerWin,2000,timerStatistics.timerId, originBody);
+             setTimeout(()=> selectObjects.selectCouple = false, 1000);
+         }
     })
 
     return element;
@@ -148,19 +171,24 @@ function eventRotateCard(target, selectObjcts) {
     const cardFront = card.querySelector(".front-card");
     const cardBack = card.querySelector(".back-card");
 
-    if (!cardBack.classList.contains("couples")){
-        cardFront.classList.toggle("front-card-active");
-        cardBack.classList.toggle("back-card-active");
-
-        if (selectObjcts.firstObjct) {
+    if (!cardBack.classList.contains("couples") && !selectObjcts.selectCouple){
+        if (selectObjcts.firstObjct !== "") {
             if (findCard(selectObjcts.firstObjct).id !== card.id){
+                cardFront.classList.toggle("front-card-active");
+                cardBack.classList.toggle("back-card-active");
                 selectObjcts.seconsObjct = cardBack;
                 setTimeout(changeCouple, 1200, selectObjcts, checkCouple(selectObjcts));
             }
-            selectObjcts = [];
-
-            return {selectObjcts:selectObjcts, selectCouple:true};
+            let temp = {
+                firstObjct:"",
+                seconsObjct:"",
+                selectCouple:true,
+            }
+            return {selectObjcts:temp, selectCouple:true};
         } else {
+            cardFront.classList.toggle("front-card-active");
+            cardBack.classList.toggle("back-card-active");
+
             selectObjcts.firstObjct = cardBack;
         }
     }
@@ -176,17 +204,17 @@ function findCard(target) {
     }
 }
 
-function checkCouple(selectObjc) {
-    return selectObjc.firstObjct.attributes.value.value === selectObjc.seconsObjct.attributes.value.value;
+function checkCouple(selectObjct) {
+    return selectObjct.firstObjct.attributes.value.value === selectObjct.seconsObjct.attributes.value.value;
 }
 
-function changeCouple(selectObjcs, bool) {
-    if (bool) {
-        selectObjcs.firstObjct.classList.add("couples");
-        selectObjcs.seconsObjct.classList.add("couples");
+function changeCouple(selectObjcts, statusCouple) {
+    if (statusCouple) {
+        selectObjcts.firstObjct.classList.add("couples");
+        selectObjcts.seconsObjct.classList.add("couples");
     } else {
-        let firstCard = findCard(selectObjcs.firstObjct);
-        let secondCard = findCard(selectObjcs.seconsObjct);
+        let firstCard = findCard(selectObjcts.firstObjct);
+        let secondCard = findCard(selectObjcts.seconsObjct);
 
         const firstCardFront = firstCard.querySelector(".front-card");
         const firstCardBack = firstCard.querySelector(".back-card");
@@ -200,25 +228,24 @@ function changeCouple(selectObjcs, bool) {
     }
 }
 
-function createBtnBackMenu() {
+function createBtnBackMenu(timerId) {
     const btnMenu = document.createElement("button");
     btnMenu.textContent = "Меню";
     btnMenu.classList.add("back-menu");
     btnMenu.addEventListener("click", ()=> {
-        createMenu();
-        const container = document.querySelector("body");
-        container.classList.remove("bg-confetti-animated");
+        createMenu(originBody);
+        clearTimeout(timerId);
+        originBody.classList.remove("bg-confetti-animated");
     })
 
     return btnMenu;
 }
 
-function didPlayerWin() {
-    const cards = document.querySelectorAll("div.card img");
-    const container = document.querySelector("body");
-
-    if (checkAllCard(cards)){
-        container.classList.add("bg-confetti-animated");
+function didPlayerWin(timerId, originBody) {
+    let cards = document.querySelectorAll("div.card img");
+    if (cards.length !== 0 && checkAllCard(cards)){
+        originBody.classList.add("bg-confetti-animated");
+        clearTimeout(timerId);
     }
 }
 
@@ -228,5 +255,5 @@ function checkAllCard(cards) {
             return false;
         }
     }
-    return true
+    return true;
 }
