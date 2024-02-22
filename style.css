@@ -4,7 +4,7 @@ body {
   display: grid;
   place-items: center;
   position: relative;
-  font-family: Georgia, "Times New Roman";
+  font-family: "Roboto", sans-serif;
   font-size: 2rem;
   color: #ffffff;
 }
@@ -21,6 +21,10 @@ body.bg-confetti-animated {
 body * {
   margin: 0;
   padding: 0;
+}
+body .menu-container {
+  display: grid;
+  place-items: center;
 }
 body .container {
   display: grid;
@@ -115,7 +119,7 @@ body .container div.container-couple > div img.back-card:hover {
   filter: brightness(80%);
 }
 body button {
-  font-family: Georgia, "Times New Roman";
+  font-family: "Roboto", sans-serif;
   background-color: #5c5b60;
   border-radius: 0.4rem;
   border: none;
